@@ -5,32 +5,91 @@
         <li>Cancel</li>
       </ul>
       <ul class="header-button-right">
-        <li>Next</li>
+        <li v-if="step==1" @click="step=2">Next</li>
+        <li v-if="step==2" @click="publish">Publish</li>
       </ul>
       <img src="./assets/logo.png" class="logo" />
     </div>
   
-    <ContainerCompo />
-  
+    <ContainerCompo :data="data" :step="step" :image="image" @write="userText=$event"/>
+    <button @click="more">show more</button>
+
     <div class="footer">
       <ul class="footer-button-plus">
-        <input type="file" id="file" class="inputfile" />
+        <input @change="upload" accept="image/*" type="file" id="file" class="inputfile" />
         <label for="file" class="input-plus">+</label>
       </ul>
-   </div>
+    </div>
+    
+    <!-- <div v-if="step==0">content0</div>
+    <div v-if="step==1">content1</div>
+    <div v-if="step==2">content2</div>
+    <button @click="step = 0">button0</button>
+    <button @click="step = 1">button1</button>
+    <button @click="step = 2">button2</button> -->
   </div>
 </template>
 
 <script>
 import ContainerCompo from './components/containerCompo.vue'
+import data from './assets/data.js'
+import axios from 'axios'
 
 export default {
   name: 'App',
   components: {
     ContainerCompo
+  },
+  data(){
+    return{
+      step:0,
+      data:data,
+      showMore:0,
+      image:'',
+      userText:''
+    }
+  },
+  methods:{
+    more(){
+      axios.get(`https://codingapple1.github.io/vue/more${this.showMore}.json`)
+      .then((result)=> {
+        this.data.push(result.data);
+        this.showMore++;
+      })
+    },
+    upload(e){
+      let file = e.target.files;
+      console.log(file[0]);
+      let url = URL.createObjectURL(file[0]);
+      console.log(url);
+      this.image = url
+      this.step = 1;
+    },
+    publish(){
+      var newPost = {
+        name: "Kim Hyun",
+        userImage: "https://placeimg.com/100/100/arch",
+        postImage: this.image,
+        likes: 36,
+        date: "May 15",
+        liked: false,
+        content: this.userText,
+        filter: "perpetua"
+      };
+      this.data.unshift(newPost);
+      this.step = 0;
+    }
   }
 }
 </script>
+
+
+
+
+
+
+
+
 
 <style>
 body {
