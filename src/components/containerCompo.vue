@@ -3,17 +3,21 @@
     <div v-if="step==0">
         <postCompo :data="data[idx]" v-for="(d,idx) in data" :key="idx"></postCompo>
     </div>
-    <!-- 필터선택페이지 -->
+    <!-- Filter select Page -->
     <div v-if="step==1">
-        <div class="upload-image" :style="`background-image:url(${image});`"></div>
+        <div :class="filterName + ' filter-item'" class="upload-image" :style="`background-image:url(${image});`">
+            
+        </div>
         <div class="filters">
-            <filterboxCompo :image="image" :filter="filter" v-for="filter in filters" :key="filter"></filterboxCompo>
+            <filterboxCompo  :image="image" :filter="filter" v-for="filter in filters" :key="filter">
+                <span>{{ filter }}</span>
+            </filterboxCompo>
         </div>
     </div>
 
-    <!-- 글작성페이지 -->
+    <!-- Post writing Page -->
     <div v-if="step==2">
-        <div class="upload-image" :style="`background-image:url(${image});`"></div>
+        <div :class="filterName" class="upload-image" :style="`background-image:url(${image});`"></div>
         <div class="write">
             <textarea @input="$emit('write',$event.target.value)" class="write-box">write!</textarea>
         </div>
@@ -41,9 +45,15 @@ export default {
         return{
             filters:[ "aden", "_1977", "brannan", "brooklyn", "clarendon", "earlybird", "gingham", "hudson", 
             "inkwell", "kelvin", "lark", "lofi", "maven", "mayfair", "moon", "nashville", "perpetua", 
-            "reyes", "rise", "slumber", "stinson", "toaster", "valencia", "walden", "willow", "xpro2"],        
+            "reyes", "rise", "slumber", "stinson", "toaster", "valencia", "walden", "willow", "xpro2"],
+            filterName:''        
         }
-    }
+    },
+    mounted(){
+        this.emitter.on('boxClicked',(filtername)=>{
+            this.filterName = filtername;
+        });
+    },
 }
 </script>
 

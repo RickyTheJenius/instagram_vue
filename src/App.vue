@@ -10,8 +10,7 @@
       </ul>
       <img src="./assets/logo.png" class="logo" />
     </div>
-  
-    <ContainerCompo :data="data" :step="step" :image="image" @write="userText=$event"/>
+    <ContainerCompo :filterName="filter" :data="data" :step="step" :image="image" @write="userText=$event"/>
     <button @click="more">show more</button>
 
     <div class="footer">
@@ -40,13 +39,19 @@ export default {
   components: {
     ContainerCompo
   },
+  mounted(){
+    this.emitter.on('boxClicked',(filtername)=>{
+      this.filterName = filtername;
+    });
+  },
   data(){
     return{
       step:0,
       data:data,
       showMore:0,
       image:'',
-      userText:''
+      userText:'',
+      filterName:''
     }
   },
   methods:{
@@ -74,7 +79,7 @@ export default {
         date: "May 15",
         liked: false,
         content: this.userText,
-        filter: "perpetua"
+        filter: this.filterName
       };
       this.data.unshift(newPost);
       this.step = 0;
